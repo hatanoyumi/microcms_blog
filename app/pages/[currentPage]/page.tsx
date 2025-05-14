@@ -4,10 +4,14 @@ import Pagination from "@/components/pagination";
 import { getArticles } from "@/lib/client";
 import { LIMIT } from "@/lib/constants";
 
-export default async function Home() {
+export default async function Page(props: {
+  params: Promise<{ currentPage: string }>;
+}) {
+  const { currentPage } = await props.params;
+  const currentPageInt = parseInt(currentPage, 10);
   const { contents: articles, totalCount } = await getArticles({
     limit: LIMIT,
-    offset: 0,
+    offset: (currentPageInt - 1) * LIMIT,
   });
 
   return (
@@ -16,6 +20,7 @@ export default async function Home() {
       <ArticleList articles={articles} />
       <Pagination
         totalCount={totalCount}
+        currentPage={currentPageInt}
       />
     </div>
   );
